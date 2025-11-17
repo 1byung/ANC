@@ -38,3 +38,8 @@ python-dotenv>=1.0.0
 # Testing
 pytest>=7.4.0
 pytest-cov>=4.1.0
+
+# Data Download & Processing
+requests>=2.31.0
+wget>=3.2
+gdown>=4.7.0  # Google Drive downloads
