@@ -1,0 +1,101 @@
+# 능동 소음 제어 기본 설정
+
+# 오디오 설정
+audio:
+  sample_rate: 16000
+  mono: true
+  duration: 5.0  # seconds
+
+# 전처리 설정
+preprocessing:
+  n_fft: 2048
+  hop_length: 512
+  n_mels: 128
+  n_mfcc: 40
+
+# 노이즈 생성 설정
+noise:
+  types:
+    - white
+    - pink
+    - brown
+  snr_db_range: [-5, 20]  # SNR 범위 (dB)
+  amplitude: 0.1
+
+# LSTM 모델 설정
+lstm_model:
+  input_shape: [100, 128]  # [time_steps, features]
+  lstm_units: [128, 64]
+  dropout_rate: 0.2
+  learning_rate: 0.001
+
+  # 학습 설정
+  training:
+    epochs: 50
+    batch_size: 32
+    validation_split: 0.2
+    early_stopping_patience: 10
+    reduce_lr_patience: 5
+
+# 적응 필터 설정
+adaptive_filter:
+  filter_type: nlms  # lms, nlms, rls
+  filter_length: 256
+
+  # LMS 파라미터
+  lms:
+    mu: 0.01
+
+  # NLMS 파라미터
+  nlms:
+    mu: 0.5
+    epsilon: 1.0e-6
+
+  # RLS 파라미터
+  rls:
+    lambda_factor: 0.99
+    delta: 1.0
+
+# 데이터셋 설정
+dataset:
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+
+  # 데이터 증강
+  augmentation:
+    enabled: true
+    pitch_shift: [-2, 2]  # semitones
+    time_stretch: [0.8, 1.2]
+    add_noise: true
+
+# PySpark 설정 (대규모 데이터 처리용)
+pyspark:
+  enabled: false
+  master: local[*]
+  app_name: NoiseControlAI
+  executor_memory: 4g
+  driver_memory: 2g
+
+# 평가 메트릭
+evaluation:
+  metrics:
+    - snr
+    - si_sdr
+    - mse
+    - rmse
+    - pesq
+    - stoi
+
+# 로깅 설정
+logging:
+  level: INFO
+  save_dir: logs/
+  tensorboard: true
+
+# 모델 저장 설정
+checkpoint:
+  save_dir: models/
+  save_best_only: true
+  monitor: val_loss
+  mode: min
